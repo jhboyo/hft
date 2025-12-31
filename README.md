@@ -1,4 +1,4 @@
-# HFT Trading System
+# 2026 HFT Trading System
 
 HFT 알고리즘 기반 주식 초단타 자동거래 시스템
 
@@ -24,7 +24,7 @@ HFT 알고리즘 기반 주식 초단타 자동거래 시스템
 ## 프로젝트 구조
 
 ```
-hpt-trading/
+hft/
 ├── src/
 │   ├── api/          # KIS API 클라이언트
 │   ├── data/         # 데이터 수집 및 저장
@@ -44,7 +44,7 @@ hpt-trading/
 
 ```bash
 git clone <repository-url>
-cd hpt-trading
+cd hft
 ```
 
 ### 2. 가상환경 생성 및 의존성 설치
