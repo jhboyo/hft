@@ -1,7 +1,7 @@
 """
 로깅 시스템 설정 모듈
 
-이 모듈은 HPT Trading System의 통합 로깅 시스템을 제공합니다.
+이 모듈은 HFT Trading System의 통합 로깅 시스템을 제공합니다.
 - 콘솔 출력: 개발 중 실시간 로그 확인
 - 파일 로테이션: 로그 파일 크기 관리 및 자동 백업
 - 설정 기반: YAML 파일로 로그 레벨, 포맷 등 커스터마이징
@@ -24,7 +24,7 @@ import yaml
 
 
 def setup_logger(
-    name: str = "hpt_trading",
+    name: str = "hft",
     config_path: Optional[str] = None,
     log_level: Optional[str] = None,
 ) -> logging.Logger:
@@ -35,7 +35,7 @@ def setup_logger(
     콘솔 출력과 파일 출력(로테이션)을 모두 지원하며, 중복 초기화를 방지합니다.
 
     Args:
-        name: 로거 이름 (보통 __name__ 또는 "hpt_trading")
+        name: 로거 이름 (보통 __name__ 또는 "hft")
         config_path: 설정 파일 경로 (기본값: config/config.yaml)
         log_level: 로그 레벨 (DEBUG, INFO, WARNING, ERROR, CRITICAL)
                    이 인자가 제공되면 환경변수/설정파일보다 우선 적용됨
@@ -89,7 +89,7 @@ def setup_logger(
 
     # ===== 3. 로그 포맷 설정 =====
     # 포맷 문자열: "시간 - 로거명 - 레벨 - 메시지"
-    # 예: "2025-12-30 20:30:15 - hpt_trading - INFO - Trading started"
+    # 예: "2025-12-30 20:30:15 - hft - INFO - Trading started"
     log_format = log_config.get(
         "format",
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -142,7 +142,7 @@ def setup_logger(
     return logger
 
 
-def get_logger(name: str = "hpt_trading") -> logging.Logger:
+def get_logger(name: str = "hft") -> logging.Logger:
     """
     기존 로거를 반환하거나 없으면 새로 생성합니다.
 
@@ -163,7 +163,7 @@ def get_logger(name: str = "hpt_trading") -> logging.Logger:
         >>> logger.info("모듈 시작")
         >>>
         >>> # 또는 전역 로거 사용
-        >>> logger = get_logger("hpt_trading")
+        >>> logger = get_logger("hft")
         >>> logger.debug("디버그 정보")
     """
     # 기존 로거 인스턴스 가져오기

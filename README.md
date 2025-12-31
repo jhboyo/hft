@@ -1,6 +1,6 @@
-# HPT Trading System
+# HFT Trading System
 
-HPT 알고리즘 기반 주식 초단타 자동거래 시스템
+HFT 알고리즘 기반 주식 초단타 자동거래 시스템
 
 ## 개요
 

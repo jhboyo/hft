@@ -1,8 +1,8 @@
-# HPT Trading System - Claude Assistant Guide
+# HFT Trading System - Claude Assistant Guide
 
 ## 프로젝트 개요
 
-**HPT 알고리즘 기반 주식 초단타 자동거래 시스템**
+**HFT 알고리즘 기반 주식 초단타 자동거래 시스템**
 
 이 프로젝트는 한국투자증권 KIS API를 활용한 자동거래 시스템입니다. 스캘핑, 기술적 지표, 머신러닝을 결합한 복합 전략을 구현하며, 실시간 데이터 수집, 백테스팅, 리스크 관리 기능을 제공합니다.
 
@@ -21,8 +21,7 @@
 
 ## 프로젝트 구조
 
-```
-hpt-trading/
+hft/
 ├── src/                        # 소스 코드 (editable mode로 설치됨)
 │   ├── api/                    # KIS API 클라이언트
 │   │   ├── __init__.py
