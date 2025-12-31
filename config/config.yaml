@@ -1,0 +1,161 @@
+# ===================================================================
+# HPT Trading System Configuration
+# ===================================================================
+# 이 파일은 시스템 전체의 설정을 관리합니다.
+# YAML 포맷을 사용하며, 들여쓰기로 계층 구조를 표현합니다.
+# ===================================================================
+
+# ===== 로깅 설정 =====
+logging:
+  # 로그 레벨: DEBUG < INFO < WARNING < ERROR < CRITICAL
+  # 개발: DEBUG, 운영: INFO 권장
+  level: INFO
+
+  # 로그 출력 포맷
+  # %(asctime)s: 시간, %(name)s: 로거명, %(levelname)s: 레벨, %(message)s: 메시지
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+  # 파일 로깅 설정
+  file:
+    enabled: true  # true: 파일에 로그 저장, false: 파일 로깅 비활성화
+    path: logs/trading.log  # 로그 파일 경로
+    max_bytes: 10485760  # 로그 파일 최대 크기 (10MB = 10 * 1024 * 1024)
+    backup_count: 5  # 백업 파일 개수 (trading.log.1 ~ trading.log.5)
+    # 파일이 max_bytes를 초과하면 자동으로 로테이션됨
+
+  # 콘솔 로깅 설정
+  console:
+    enabled: true  # true: 터미널에 로그 출력, false: 콘솔 로깅 비활성화
+
+
+# ===== 데이터베이스 설정 =====
+database:
+  # SQLite 데이터베이스 파일 경로
+  path: data/trading.db
+
+  # 데이터베이스 연결 타임아웃 (초)
+  # 이 시간 내에 락을 획득하지 못하면 예외 발생
+  timeout: 30
+
+  # SQLite 동일 스레드 체크 비활성화
+  # false: 여러 스레드에서 동일한 연결 사용 가능 (주의 필요)
+  # true: 연결을 생성한 스레드에서만 사용 가능 (안전)
+  check_same_thread: false
+
+
+# ===== KIS API 설정 =====
+kis_api:
+  # ----- REST API 설정 -----
+  rest:
+    # API 베이스 URL
+    base_url:
+      real: https://openapi.koreainvestment.com:9443  # 실전투자 (실제 거래)
+      virtual: https://openapivt.koreainvestment.com:29443  # 모의투자 (테스트)
+
+    # 요청 타임아웃 (초)
+    # API 응답이 이 시간 내에 오지 않으면 타임아웃
+    timeout: 10
+
+    # 재시도 설정
+    max_retries: 3  # 실패 시 최대 재시도 횟수
+    retry_delay: 1  # 재시도 간격 (초)
+
+  # ----- WebSocket 설정 -----
+  websocket:
+    # WebSocket 서버 URL
+    url:
+      real: ws://ops.koreainvestment.com:21000  # 실전투자
+      virtual: ws://ops.koreainvestment.com:31000  # 모의투자
+
+    # 재연결 설정
+    reconnect_interval: 5  # 재연결 시도 간격 (초)
+    max_reconnect_attempts: 10  # 최대 재연결 시도 횟수
+
+  # ----- Rate Limiting (API 호출 제한) -----
+  # KIS API는 초당 20회 호출 제한이 있음
+  rate_limit:
+    calls_per_second: 20  # 초당 최대 호출 횟수
+    burst: 5  # 순간적인 버스트 허용 (짧은 시간에 몰아서 호출 가능한 횟수)
+
+
+# ===== 거래 설정 =====
+trading:
+  # ----- 리스크 관리 -----
+  # 손실을 제한하고 리스크를 관리하기 위한 설정
+  risk:
+    # 최대 포지션 크기 (원)
+    # 한 번에 투자할 수 있는 최대 금액
+    max_position_size: 1000000  # 100만원
+
+    # 일일 최대 손실 (원)
+    # 하루 동안 발생할 수 있는 최대 손실 금액
+    # 이 금액에 도달하면 자동으로 거래 중지
+    max_daily_loss: 100000  # 10만원
+
+    # 최대 동시 포지션 수
+    # 동시에 보유할 수 있는 최대 종목 수
+    max_positions: 3
+
+    # 손절 비율 (Stop Loss)
+    # 매수가 대비 손실률이 이 비율을 초과하면 자동 매도
+    # 0.02 = 2% (예: 10,000원에 매수 → 9,800원 이하 도달 시 손절)
+    stop_loss_pct: 0.02
+
+    # 익절 비율 (Take Profit)
+    # 매수가 대비 수익률이 이 비율을 초과하면 자동 매도
+    # 0.05 = 5% (예: 10,000원에 매수 → 10,500원 이상 도달 시 익절)
+    take_profit_pct: 0.05
+
+  # ----- 주문 설정 -----
+  order:
+    # 기본 주문 수량 (주)
+    default_quantity: 10
+
+    # 주문 유형
+    # limit: 지정가 주문 (원하는 가격에만 체결)
+    # market: 시장가 주문 (즉시 체결, 가격 변동 위험)
+    order_type: limit
+
+    # 호가 조정 (틱)
+    # 지정가 주문 시 현재가에서 몇 틱 떨어진 가격으로 주문할지
+    # 0: 현재가, 양수: 현재가보다 높게, 음수: 현재가보다 낮게
+    price_adjustment: 0
+
+
+# ===== 전략 설정 =====
+strategy:
+  # 활성화할 전략 목록
+  # 현재는 기술적 지표 전략만 활성화
+  enabled:
+    - technical
+    # - scalping  # 스캘핑 전략 (비활성화)
+    # - ml  # 머신러닝 전략 (비활성화)
+
+  # ----- 기술적 지표 전략 설정 -----
+  technical:
+    # 사용할 기술적 지표 목록
+    indicators:
+      - RSI  # Relative Strength Index (상대강도지수)
+      - MACD  # Moving Average Convergence Divergence
+
+    # 시간 프레임
+    # 1m: 1분봉, 5m: 5분봉, 1h: 1시간봉, 1d: 1일봉
+    timeframe: 1m
+
+
+# ===== 백테스팅 설정 =====
+# 과거 데이터로 전략을 테스트하기 위한 설정
+backtest:
+  # 초기 자본금 (원)
+  # 백테스트 시작 시 보유한 현금
+  initial_capital: 10000000  # 1,000만원
+
+  # 수수료 비율
+  # 매수/매도 시 발생하는 거래 수수료
+  # 0.00015 = 0.015% (국내 주식 수수료 평균)
+  commission: 0.00015
+
+  # 슬리피지 비율
+  # 주문 가격과 실제 체결 가격의 차이
+  # 0.001 = 0.1% (시장 상황에 따라 달라질 수 있음)
+  slippage: 0.001
